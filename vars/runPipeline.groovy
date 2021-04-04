@@ -99,21 +99,21 @@ def call(Map pipelineParams) {
                 }
             }
 
-            // stage('Docker Image') {
-            //     steps {
-            //         container('docker') {
-            //             sh "ls -l target/*.jar"
-            //             sh "test -f ./Dockerfile || cp ./${JENKINS_FILES_DIR}/files/Dockerfile ./Dockerfile"
-            //             sh '''eval "$(sed 's/^/echo "/; s/$/";/' ./Dockerfile)" > ./parsed-Dockerfile '''
-            //             sh "cat ./parsed-Dockerfile"
-            //             sh """
-            // docker --version
-            // docker build -t ${DOCKER_REGISTRY}/${APP_NAME}-${PROFILE}:${BUILD_NUMBER} -f ./parsed-Dockerfile .
-            // docker push ${DOCKER_REGISTRY}/${APP_NAME}-${PROFILE}:${BUILD_NUMBER}
-            // """
-            //         }
-            //     }
-            // }
+            stage('Docker Image') {
+                steps {
+                    container('docker') {
+                        sh "ls -l target/*.jar"
+                        sh "test -f ./Dockerfile || cp ./${JENKINS_FILES_DIR}/files/Dockerfile ./Dockerfile"
+                        sh '''eval "$(sed 's/^/echo "/; s/$/";/' ./Dockerfile)" > ./parsed-Dockerfile '''
+                        sh "cat ./parsed-Dockerfile"
+                        sh """
+             docker --version
+             docker build -t ${DOCKER_REGISTRY}/${APP_NAME}-${PROFILE}:${BUILD_NUMBER} -f ./parsed-Dockerfile .
+             docker push ${DOCKER_REGISTRY}/${APP_NAME}-${PROFILE}:${BUILD_NUMBER}
+             """
+                    }
+                }
+            }
 
             // stage('K8s Deployment') {
             //     steps {
