@@ -115,16 +115,16 @@ def call(Map pipelineParams) {
                 }
             }
 
-            // stage('K8s Deployment') {
-            //     steps {
-            //         container('kubectl') {
-            //             sh "test -f ./deployment.yaml || cp ./${JENKINS_FILES_DIR}/files/deployment.yaml ./deployment.yaml"
-            //             sh '''eval "$(sed 's/^/echo "/; s/$/";/' ./deployment.yaml)" > ./parsed-deployement.yaml '''
-            //             sh "cat ./parsed-deployement.yaml"
-            //             sh "kubectl apply -f ./parsed-deployement.yaml -n=${NAMESPACE}"
-            //         }
-            //     }
-            // }
+            stage('K8s Deployment') {
+                steps {
+                    container('kubectl') {
+                        sh "test -f ./deployment.yaml || cp ./${JENKINS_FILES_DIR}/files/deployment.yaml ./deployment.yaml"
+                        sh '''eval "$(sed 's/^/echo "/; s/$/";/' ./deployment.yaml)" > ./parsed-deployement.yaml '''
+                        sh "cat ./parsed-deployement.yaml"
+                        sh "kubectl apply -f ./parsed-deployement.yaml -n=${NAMESPACE}"
+                    }
+                }
+            }
 
         }
     }

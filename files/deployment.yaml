@@ -36,15 +36,8 @@ spec:
     spec:
       volumes:
         - name: nfs-volume
-          nfs:
-            server: 10.124.0.123
-            path: /vol/rancher
       containers:
         - name: ${APP_NAME}
-          volumeMounts:
-            - name: nfs-volume
-              mountPath: /log
-              subPath: ${CLUSTER}/${NAMESPACE}/${APP_NAME}/${PROFILE}
           image: ${DOCKER_REGISTRY}/${APP_NAME}-${PROFILE}:${BUILD_NUMBER}
           resources:
             requests:
