@@ -1,0 +1,97 @@
+# IMPORTANT:
+# Since this file will be processed by sed cmd to replace the placeholders,
+# please add backslash before double quote (i.e. \").
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${APP_NAME}
+spec:
+  selector:
+    app: ${APP_NAME}
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: ${CONTAINER_PORT}
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${APP_NAME}
+  labels:
+    app: ${APP_NAME}
+spec:
+  replicas: ${POD_REPLICAS}
+  selector:
+    matchLabels:
+      app: ${APP_NAME}
+  template:
+    metadata:
+      labels:
+        app: ${APP_NAME}
+    spec:
+      volumes:
+        - name: nfs-volume
+          nfs:
+            server: 10.124.0.123
+            path: /vol/rancher
+      containers:
+        - name: ${APP_NAME}
+          volumeMounts:
+            - name: nfs-volume
+              mountPath: /log
+              subPath: ${CLUSTER}/${NAMESPACE}/${APP_NAME}/${PROFILE}
+          image: ${DOCKER_REGISTRY}/${APP_NAME}-${PROFILE}:${BUILD_NUMBER}
+          resources:
+            requests:
+              cpu: '${CONTAINER_CPU_REQ}'
+              memory: '${CONTAINER_MEM_REQ}'
+            limits:
+              cpu: '${CONTAINER_CPU_LIMIT}'
+              memory: '${CONTAINER_MEM_LIMIT}'
+          ports:
+            - name: http
+              containerPort: ${CONTAINER_PORT}
+          startupProbe:
+            tcpSocket:
+              port: ${CONTAINER_PORT}
+            initialDelaySeconds: ${CONTAINER_STARTUP_PROBE_DELAY}
+            periodSeconds: ${CONTAINER_STARTUP_PROBE_PERIOD}
+            failureThreshold: ${CONTAINER_STARTUP_PROBE_FAIL_THRESHOLD}
+          livenessProbe:
+            tcpSocket:
+              port: ${CONTAINER_PORT}
+            initialDelaySeconds: ${CONTAINER_LIVE_PROBE_DELAY}
+            periodSeconds: ${CONTAINER_LIVE_PROBE_PERIOD}
+            failureThreshold: ${CONTAINER_LIVE_PROBE_FAIL_THRESHOLD}
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ${APP_NAME}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/affinity-mode: persistent
+    nginx.ingress.kubernetes.io/proxy-body-size: '0'
+    nginx.ingress.kubernetes.io/session-cookie-expires: '172800'
+    nginx.ingress.kubernetes.io/session-cookie-hash: sha1
+    nginx.ingress.kubernetes.io/session-cookie-max-age: '172800'
+    nginx.ingress.kubernetes.io/session-cookie-name: ${APP_NAME}-ingress-session
+    nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+    nginx.ingress.kubernetes.io/backend-protocol: ${CONTAINER_HTTP_PROTO}
+spec:
+  rules:
+    - host: ${INGRESS_HOST_NAME}
+      http:
+        paths:
+          - backend:
+              serviceName: ${APP_NAME}
+              servicePort: http
+            path: /${APP_NAME}
+            pathType: ImplementationSpecific
