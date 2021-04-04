@@ -116,9 +116,9 @@ def call(Map pipelineParams) {
             stage('K8s Deployment') {
                 steps {
                     container('kubectl') {
+
+                        // We don't have dns right now, so add ip in /etc/hosts
                         sh "echo '192.168.0.12   rancher-server.demo.com' >> /etc/hosts"
-                        sh "cat /etc/hosts"
-                        sh "cat ~/.kube/config"
 
                         sh "test -f ./deployment.yaml || cp ./${JENKINS_FILES_DIR}/files/deployment.yaml ./deployment.yaml"
                         sh '''eval "$(sed 's/^/echo "/; s/$/";/' ./deployment.yaml)" > ./parsed-deployement.yaml '''
