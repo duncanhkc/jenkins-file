@@ -1,7 +1,5 @@
 def call(Map pipelineParams) {
 
-    // The url of the ingress at the target cluster
-    env.INGRESS_HOST_NAME = "springboot.demo.com"
     env.JENKINS_FILES_DIR = "jenkins-files"
 
     pipeline {

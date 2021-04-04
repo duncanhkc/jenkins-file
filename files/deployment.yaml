@@ -80,7 +80,7 @@ metadata:
     nginx.ingress.kubernetes.io/backend-protocol: ${CONTAINER_HTTP_PROTO}
 spec:
   rules:
-    - host: ${INGRESS_HOST_NAME}
+    - host: ${CLUSTER_DN}
       http:
         paths:
           - backend:
