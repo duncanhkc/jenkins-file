@@ -71,11 +71,11 @@ def call(Map pipelineParams) {
                     sh "env"
                     git(branch: "${GIT_BRANCH}", url: "${GIT_URL}")
 
-                     script {
-                         dir("${JENKINS_FILES_DIR}") {
-                             git(branch: "${PIPELINE_BRANCH}", url: "${PIPELINE_GIT_URL}")
-                         }
-                     }
+                    script {
+                        dir("${JENKINS_FILES_DIR}") {
+                            git(branch: "${PIPELINE_BRANCH}", url: "${PIPELINE_GIT_URL}")
+                        }
+                    }
 
                     sh "ls -l"
                     sh "ls -l ${JENKINS_FILES_DIR}"
@@ -84,21 +84,20 @@ def call(Map pipelineParams) {
 
             }
 
-            // stage('Maven Build') {
-            //     steps {
-            //         container('maven') {
-            //             sh "cat pom.xml"
-            //             sh "mvn package -Dapp.name=${APP_NAME} \
-            //               -Djava.version=${APP_JAVA_VERSION} \
-            //               -Dmaven.compiler.source=${APP_JAVA_VERSION} \
-            //               -Dmaven.compiler.target=${APP_JAVA_VERSION} \
-            //               -Dmaven.compiler.release=${APP_JAVA_VERSION} \
-            //               -Dgarmin.repo=${MAVEN_REPO} \
-            //               -Dmaven.test.skip"
-            //             sh "ls -l target/*.jar"
-            //         }
-            //     }
-            // }
+            stage('Maven Build') {
+                steps {
+                    container('maven') {
+                        sh "cat pom.xml"
+                        sh "mvn package -Dapp.name=${APP_NAME} \
+                           -Djava.version=${APP_JAVA_VERSION} \
+                           -Dmaven.compiler.source=${APP_JAVA_VERSION} \
+                           -Dmaven.compiler.target=${APP_JAVA_VERSION} \
+                           -Dmaven.compiler.release=${APP_JAVA_VERSION} \
+                           -Dmaven.test.skip"
+                        sh "ls -l target/*.jar"
+                    }
+                }
+            }
 
             // stage('Docker Image') {
             //     steps {

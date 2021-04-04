@@ -20,8 +20,7 @@ For example, the files in branch "mvn-springboot" can only be used by applicatio
 ```shell script
 library identifier: "fetch-jenkins-file@${PIPELINE_BRANCH}", retriever: modernSCM(
   [$class: 'GitSCMSource',
-   remote: "${PIPELINE_GIT_URL}",
-   credentialsId: "${GIT_SSH_ID}"])
+   remote: "${PIPELINE_GIT_URL}"])
 
 runPipeline([:])
 ```
