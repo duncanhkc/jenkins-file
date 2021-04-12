@@ -20,14 +20,14 @@ def call(Map pipelineParams) {
           volumes:
             - name: maven-volume
               nfs:
-                server: 192.168.0.13
+                server: 172.31.15.18
                 path: /nfs_share/infra/jenkins/.m2
             - name: docker-socket-volume
               hostPath:
                 path: /var/run/docker.sock
             - name: kubectl-volume
               nfs:
-                server: 192.168.0.13
+                server: 172.31.15.18
                 path: /nfs_share/infra/jenkins/.kube
           containers:
             - name: maven
